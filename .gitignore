@@ -1,0 +1,6 @@
+bin/
+*.log
+build/*.yaml
+.idea
+*/build/
+.gradle
