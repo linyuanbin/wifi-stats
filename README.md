@@ -72,3 +72,16 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
     - **BootReceiver**：开机后若开关为开，重新调度 1 分钟检查。
 
 统计仅针对 SSID 为 **LIN-INC** 的 WiFi；连接其他 WiFi 或移动网络时不会计入。
+
+## 预览
+### 1.主页
+<img src="./assets/home.png" width = "150" height = "300" alt="图片名称" align=center />
+<img src="./assets/home2.jpg" width = "150" height = "300" alt="图片名称" align=center />
+
+### 2.汇总页
+<img src="./assets/report.png" width = "150" height = "300" alt="图片名称" align=center />
+<img src="./assets/report2.jpg" width = "150" height = "300" alt="图片名称" align=center />
+
+### 3.配置项
+<img src="./assets/setting.png" width = "150" height = "300" alt="图片名称" align=center />
+<img src="./assets/ding.png" width = "300" height = "200" alt="图片名称" align=center />
