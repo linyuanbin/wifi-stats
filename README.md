@@ -73,6 +73,12 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 统计仅针对 SSID 为 **LIN-INC** 的 WiFi；连接其他 WiFi 或移动网络时不会计入。
 
+## 特别声明
+* 本仓库发布的`wifi-stats`项目中涉及的任何代码/APK，仅用于测试和学习研究，禁止用于商业用途，不能保证其合法性，准确性，完整性和有效性，请根据情况自行判断。
+* 如果任何单位或个人认为该项目的代码/APK可能涉嫌侵犯其权利，则应及时通知并提供身份证明，所有权证明，我们将在收到认证文件后删除相关代码/APK。
+* 隐私声明： `wifi-stats` 不会收集任何您的隐私数据,完全本地程序，无后端服务。
+* 防诈提醒： `wifi-stats`完全免费开源。
+
 ## 预览
 ### 1.主页
 <img src="./assets/home.png" width = "150" height = "300" alt="图片名称" align=center /><img src="./assets/home2.jpg" width = "150" height = "300" alt="图片名称" align=center />
