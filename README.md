@@ -75,13 +75,11 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 ## 预览
 ### 1.主页
-<img src="./assets/home.png" width = "150" height = "300" alt="图片名称" align=center />
-<img src="./assets/home2.jpg" width = "150" height = "300" alt="图片名称" align=center />
+<img src="./assets/home.png" width = "150" height = "300" alt="图片名称" align=center /><img src="./assets/home2.jpg" width = "150" height = "300" alt="图片名称" align=center />
 
 ### 2.汇总页
-<img src="./assets/report.png" width = "150" height = "300" alt="图片名称" align=center />
-<img src="./assets/report2.jpg" width = "150" height = "300" alt="图片名称" align=center />
+<img src="./assets/report.png" width = "150" height = "300" alt="图片名称" align=center /><img src="./assets/report2.jpg" width = "150" height = "300" alt="图片名称" align=center />
 
 ### 3.配置项
-<img src="./assets/setting.png" width = "150" height = "300" alt="图片名称" align=center />
-<img src="./assets/ding.png" width = "300" height = "200" alt="图片名称" align=center />
+<img src="./assets/setting.png" width = "150" height = "300" alt="图片名称" align=center /><img src="./assets/ding.png" width = "300" height = "200" alt="图片名称" align=center />
+
