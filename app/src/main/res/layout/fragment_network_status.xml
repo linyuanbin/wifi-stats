@@ -52,6 +52,20 @@
                 android:textStyle="bold"
                 android:layout_marginTop="4dp"
                 android:text="@string/wifi_status_none" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/target_ssid_label"
+                android:textSize="14sp"
+                android:textColor="?android:attr/textColorSecondary"
+                android:layout_marginTop="12dp" />
+            <TextView
+                android:id="@+id/text_target_ssid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_marginTop="4dp"
+                android:text="--" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

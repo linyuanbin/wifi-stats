@@ -11,6 +11,16 @@ class Prefs(context: Context) {
         get() = prefs.getBoolean(KEY_WIFI_CHECK_ENABLED, false)
         set(value) = prefs.edit().putBoolean(KEY_WIFI_CHECK_ENABLED, value).apply()
 
+    /** 统计的 Wi-Fi SSID，默认 LIN-INC，支持修改 */
+    var targetSsid: String
+        get() = prefs.getString(KEY_TARGET_SSID, null)?.takeIf { it.isNotBlank() } ?: DEFAULT_TARGET_SSID
+        set(value) = prefs.edit().putString(KEY_TARGET_SSID, value?.trim()?.takeIf { it.isNotBlank() } ?: "").apply()
+
+    /** 统计 SSID 的原始存储值（用于设置页显示，空表示使用默认） */
+    var targetSsidRaw: String
+        get() = prefs.getString(KEY_TARGET_SSID, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_TARGET_SSID, value?.trim() ?: "").apply()
+
     var lastLinConnectedAtMs: Long
         get() = prefs.getLong(KEY_LAST_lin_CONNECTED_AT, 0)
         set(value) = prefs.edit().putLong(KEY_LAST_lin_CONNECTED_AT, value).apply()
@@ -41,7 +51,9 @@ class Prefs(context: Context) {
 
     companion object {
         private const val PREFS_NAME = "lin_wifi_stats"
+        const val DEFAULT_TARGET_SSID = "LIN-INC"
         private const val KEY_WIFI_CHECK_ENABLED = "wifi_check_enabled"
+        private const val KEY_TARGET_SSID = "target_ssid"
         private const val KEY_LAST_lin_CONNECTED_AT = "last_lin_connected_at"
         private const val KEY_FIRST_lin_CONNECTED_TODAY_MS = "first_lin_connected_today_ms"
         private const val KEY_LAST_lin_DISCONNECTED_AT = "last_lin_disconnected_at"

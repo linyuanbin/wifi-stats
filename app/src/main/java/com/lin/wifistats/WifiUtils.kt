@@ -8,7 +8,9 @@ import android.net.wifi.WifiManager
 import android.os.Build
 
 object WifiUtils {
-    private const val TARGET_SSID = "LIN-INC"
+
+    /** 当前配置的统计目标 SSID，默认 LIN-INC */
+    fun getTargetSsid(context: Context): String = Prefs(context).targetSsid
 
     fun isWifiConnected(context: Context): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -48,11 +50,12 @@ object WifiUtils {
         return null
     }
 
-    /** 是否连接 LIN-INC：规范化后做不区分大小写比较，并兼容含多余空格/字符 */
+    /** 是否连接配置的目标 SSID：规范化后做不区分大小写比较，并兼容含多余空格/字符 */
     fun isConnectedToLinInc(context: Context): Boolean {
         val ssid = getCurrentSsid(context) ?: return false
         val normalized = ssid.trim().lowercase()
-        val target = TARGET_SSID.trim().lowercase()
+        val target = getTargetSsid(context).trim().lowercase()
+        if (target.isEmpty()) return false
         return normalized == target || normalized.contains(target)
     }
 }

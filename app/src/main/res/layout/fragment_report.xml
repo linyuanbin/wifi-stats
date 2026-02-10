@@ -18,7 +18,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="LIN-INC 统计（连接时长 / 上传 / 下载）"
+                android:text="Wi-Fi 统计（连接时长 / 上传 / 下载）"
                 android:textSize="16sp"
                 android:textStyle="bold"/>
         <Button

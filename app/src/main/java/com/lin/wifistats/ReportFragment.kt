@@ -46,6 +46,7 @@ class ReportFragment : Fragment() {
                 currentTab = tab?.position ?: 0
                 refreshStats()
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
@@ -74,19 +75,42 @@ class ReportFragment : Fragment() {
         when (currentTab) {
             0 -> {
                 val data = store.getDailyData(30)
-                val items = data.map { StatItem(it.first, it.second.durationSeconds, it.second.rxBytes, it.second.txBytes) }
+                val items = data.map {
+                    StatItem(
+                        it.first,
+                        it.second.durationSeconds,
+                        it.second.rxBytes,
+                        it.second.txBytes
+                    )
+                }
                 setupChart(chart, items, "日期")
                 adapter.setData(items.reversed())
             }
+
             1 -> {
                 val data = store.getWeeklyData(12)
-                val items = data.map { StatItem(it.first, it.second.durationSeconds, it.second.rxBytes, it.second.txBytes) }
+                val items = data.map {
+                    StatItem(
+                        it.first,
+                        it.second.durationSeconds,
+                        it.second.rxBytes,
+                        it.second.txBytes
+                    )
+                }
                 setupChart(chart, items, "周")
                 adapter.setData(items.reversed())
             }
+
             2 -> {
                 val data = store.getMonthlyData(12)
-                val items = data.map { StatItem(it.first, it.second.durationSeconds, it.second.rxBytes, it.second.txBytes) }
+                val items = data.map {
+                    StatItem(
+                        it.first,
+                        it.second.durationSeconds,
+                        it.second.rxBytes,
+                        it.second.txBytes
+                    )
+                }
                 setupChart(chart, items, "月份")
                 adapter.setData(items.reversed())
             }
@@ -100,9 +124,12 @@ class ReportFragment : Fragment() {
             chart.invalidate()
             return
         }
-        val entriesDuration = items.mapIndexed { i, it -> Entry(i.toFloat(), it.durationSeconds.toFloat() / 3600f) }
-        val entriesRx = items.mapIndexed { i, it -> Entry(i.toFloat(), it.rxBytes.toFloat() / (1024 * 1024)) }
-        val entriesTx = items.mapIndexed { i, it -> Entry(i.toFloat(), it.txBytes.toFloat() / (1024 * 1024)) }
+        val entriesDuration =
+            items.mapIndexed { i, it -> Entry(i.toFloat(), it.durationSeconds.toFloat() / 3600f) }
+        val entriesRx =
+            items.mapIndexed { i, it -> Entry(i.toFloat(), it.rxBytes.toFloat() / (1024 * 1024)) }
+        val entriesTx =
+            items.mapIndexed { i, it -> Entry(i.toFloat(), it.txBytes.toFloat() / (1024 * 1024)) }
 
         val ctx = requireContext()
         val setDuration = LineDataSet(entriesDuration, "连接时长(h)").apply {
@@ -111,20 +138,21 @@ class ReportFragment : Fragment() {
             lineWidth = 2f
             setDrawValues(true)
         }
-        val setRx = LineDataSet(entriesRx, "下载(MB)").apply {
-            color = ContextCompat.getColor(ctx, android.R.color.holo_green_dark)
-            setCircleColor(ContextCompat.getColor(ctx, android.R.color.holo_green_dark))
-            lineWidth = 2f
-            setDrawValues(true)
-        }
-        val setTx = LineDataSet(entriesTx, "上传(MB)").apply {
-            color = ContextCompat.getColor(ctx, android.R.color.holo_orange_dark)
-            setCircleColor(ContextCompat.getColor(ctx, android.R.color.holo_orange_dark))
-            lineWidth = 2f
-            setDrawValues(true)
-        }
+//        val setRx = LineDataSet(entriesRx, "下载(MB)").apply {
+//            color = ContextCompat.getColor(ctx, android.R.color.holo_green_dark)
+//            setCircleColor(ContextCompat.getColor(ctx, android.R.color.holo_green_dark))
+//            lineWidth = 2f
+//            setDrawValues(true)
+//        }
+//        val setTx = LineDataSet(entriesTx, "上传(MB)").apply {
+//            color = ContextCompat.getColor(ctx, android.R.color.holo_orange_dark)
+//            setCircleColor(ContextCompat.getColor(ctx, android.R.color.holo_orange_dark))
+//            lineWidth = 2f
+//            setDrawValues(true)
+//        }
 
-        chart.data = LineData(setDuration, setRx, setTx)
+//        chart.data = LineData(setDuration, setRx, setTx)
+        chart.data = LineData(setDuration)
         chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         chart.xAxis.valueFormatter = IndexAxisValueFormatter(items.map { it.period })
         chart.xAxis.setAvoidFirstLastClipping(true)

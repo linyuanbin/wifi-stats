@@ -16,6 +16,7 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbarSettings.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
         val prefs = Prefs(this)
+        binding.etTargetSsid.setText(prefs.targetSsidRaw)
         binding.etDingtalkWebhook.setText(prefs.dingTalkWebhookUrl ?: "")
         binding.tvVersion.text = getString(R.string.app_version_copyright)
         try {
@@ -30,7 +31,9 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        val prefs = Prefs(this)
+        prefs.targetSsidRaw = binding.etTargetSsid.text?.toString()?.trim() ?: ""
         val url = binding.etDingtalkWebhook.text?.toString()?.trim()?.takeIf { it.isNotBlank() }
-        Prefs(this).dingTalkWebhookUrl = url
+        prefs.dingTalkWebhookUrl = url
     }
 }

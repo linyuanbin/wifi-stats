@@ -1,4 +1,4 @@
-# lin WiFi 统计 (Android)
+# WiFi 统计 (Android)
 
 简单 Android 应用，实现：
 
@@ -6,16 +6,19 @@
     - 每 1 分钟检查一次是否连接 WiFi；未连接时发送通知提醒。
     - 可通过首页开关开启/关闭该检查。
     - 开机后若之前已开启，会自动恢复定时检查。
-    - 支持订阅钉钉webhook托送通知
+    - 支持订阅钉钉webhook推送断连通知
 
-2. **LIN-INC 统计**
-    - 仅统计连接名为 **LIN-INC** 的 WiFi：
+2. **Wi-Fi 统计**
+    - 仅统计连接名为 **LIN-INC** 的 WiFi：(设置中可修改Wi-Fi名称)
         - 连接总时长
         - 上传总流量（tx）
         - 下载总流量（rx）
     - 按 **天 / 周 / 月** 三个维度展示：
         - 折线图：连接时长(h)、下载(MB)、上传(MB)
         - 表格：日期、连接时长、上传、下载
+3. **手机安装注意事项**
+    - 需要对应用开启消息推送和运行后台运行的权限（部分手机系统自动管理app,会存在杀后台情况）
+        - 后台权限不足可能导致问题：时间计算不准确、Wi-Fi断开提示消息无法发送或者发送堆积延迟
 
 ## 环境与构建
 
@@ -66,12 +69,12 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 - `app/src/main/java/com/lin/wifistats/`
     - **MainActivity**：首页，WiFi 检查开关 + 日/周/月 Tab 与统计图表、表格。
     - **WifiCheckReceiver** + **WifiCheckScheduler**：每 1 分钟执行一次检查，未连 WiFi 时发通知。
-    - **WifiStatsStore**：按天持久化 LIN-INC 的时长与流量，并聚合成周/月。
-    - **WifiUtils**：判断是否连 WiFi、当前 SSID 是否为 LIN-INC。
+    - **WifiStatsStore**：按天持久化Wi-Fi的时长与流量，并聚合成周/月。
+    - **WifiUtils**：判断是否连 WiFi、当前 SSID 是否为 配置的目标Wi-Fi。
     - **Prefs**：是否开启“未连 WiFi 提醒”的开关状态。
     - **BootReceiver**：开机后若开关为开，重新调度 1 分钟检查。
 
-统计仅针对 SSID 为 **LIN-INC** 的 WiFi；连接其他 WiFi 或移动网络时不会计入。
+统计仅针对 SSID 为所配置的WiFi；连接其他 WiFi 或移动网络时不会计入。
 
 ## 特别声明
 * 本仓库发布的`wifi-stats`项目中涉及的任何代码/APK，仅用于测试和学习研究，禁止用于商业用途，不能保证其合法性，准确性，完整性和有效性，请根据情况自行判断。

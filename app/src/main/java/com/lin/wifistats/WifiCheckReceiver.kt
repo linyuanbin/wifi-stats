@@ -1,5 +1,6 @@
 package com.lin.wifistats
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -27,7 +28,8 @@ class WifiCheckReceiver : BroadcastReceiver() {
             val connectedToLin = WifiUtils.isConnectedToLinInc(context)
             val wifiConnected = WifiUtils.isWifiConnected(context)
             val ssidUnknown = wifiConnected && WifiUtils.getCurrentSsid(context).isNullOrEmpty()
-            val effectiveConnectedToLin = if (ssidUnknown) store.getWasLinConnected() else connectedToLin
+            val effectiveConnectedToLin =
+                if (ssidUnknown) store.getWasLinConnected() else connectedToLin
             val justDisconnected = store.onWifiStateChanged(context, effectiveConnectedToLin)
 
             val prefs = Prefs(context)
@@ -35,15 +37,18 @@ class WifiCheckReceiver : BroadcastReceiver() {
                 WifiCheckScheduler.cancel(context)
                 return
             }
+
+            val now = System.currentTimeMillis()
+            val throttleMs = 30 * 1000L // 消息限流 30s
+
             if (!wifiConnected) {
+                // 如果之前连接的是目标SSID（无论配置是否改变），现在断开Wi-Fi，都应该发送通知
+                val wasConnectedToTarget = store.getWasLinConnected()
                 // 优先发送钉钉，系统通知被拦截时用户仍能通过钉钉收到提醒
                 DingTalkNotifier.notifyWifiDisconnected(context)
-                if (justDisconnected) {
+                if (justDisconnected || wasConnectedToTarget) {
                     showLinDisconnectedNotification(context)
                 }
-                val prefs = Prefs(context)
-                val now = System.currentTimeMillis()
-                val throttleMs = 30 * 1000L // 消息限流 30s
                 if (now - prefs.lastWifiDisconnectedNotifyAtMs >= throttleMs) {
                     prefs.lastWifiDisconnectedNotifyAtMs = now
                     createChannel(
@@ -66,6 +71,46 @@ class WifiCheckReceiver : BroadcastReceiver() {
                     } catch (_: SecurityException) {
                     }
                 }
+            } else {
+                // 连接了Wi-Fi，但SSID不是目标SSID，需要发送通知
+                val currentSsid = WifiUtils.getCurrentSsid(context)
+                if (!currentSsid.isNullOrEmpty() && !connectedToLin) {
+                    // 连接了非目标SSID的Wi-Fi
+                    // 如果之前连接的是目标SSID，现在连接了其他Wi-Fi，发送断开通知
+                    if (justDisconnected) {
+                        DingTalkNotifier.notifyWifiDisconnected(context)
+                        showLinDisconnectedNotification(context)
+                    }
+                    // 发送连接了错误Wi-Fi的通知（限流，避免频繁通知）
+                    if (now - prefs.lastWifiDisconnectedNotifyAtMs >= throttleMs) {
+                        prefs.lastWifiDisconnectedNotifyAtMs = now
+                        createChannel(
+                            context,
+                            CHANNEL_ID,
+                            context.getString(R.string.wifi_wrong_ssid_title),
+                            highImportance = true
+                        )
+                        val targetSsid = WifiUtils.getTargetSsid(context)
+                        val message = context.getString(
+                            R.string.wifi_wrong_ssid_message,
+                            currentSsid,
+                            targetSsid
+                        )
+                        val periodicNotificationId =
+                            NOTIFICATION_ID + (now / throttleMs).toInt() % 100000
+                        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+                            .setSmallIcon(android.R.drawable.ic_dialog_alert)
+                            .setContentTitle(context.getString(R.string.wifi_wrong_ssid_title))
+                            .setContentText(message)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                            .setAutoCancel(true)
+                        try {
+                            NotificationManagerCompat.from(context)
+                                .notify(periodicNotificationId, builder.build())
+                        } catch (_: SecurityException) {
+                        }
+                    }
+                }
             }
         }
 
@@ -84,22 +129,26 @@ class WifiCheckReceiver : BroadcastReceiver() {
             }
         }
 
-        /** 仅当确认为「真正断开 LIN-INC」时显示通知（解锁后 SSID 暂时未知不弹） */
+        /** 仅当确认为「真正断开目标 SSID」时显示通知（解锁后 SSID 暂时未知不弹） */
         fun shouldShowDisconnectNotification(context: Context): Boolean {
             if (WifiUtils.isWifiConnected(context)) {
                 val ssid = WifiUtils.getCurrentSsid(context)
                 if (ssid.isNullOrEmpty()) return false
-                if (ssid.equals("LIN-INC", ignoreCase = true)) return false
+                if (ssid.equals(WifiUtils.getTargetSsid(context), ignoreCase = true)) return false
             }
             return true
         }
 
-        /** 每次断开 LIN-INC 时由调用方触发一次通知（钉钉已在上层优先发送） */
+        /** 每次断开目标 SSID 时由调用方触发一次通知（钉钉已在上层优先发送） */
+        @SuppressLint("StringFormatInvalid")
         fun showLinDisconnectedNotification(context: Context) {
+            val targetSsid = WifiUtils.getTargetSsid(context)
+            val title = context.getString(R.string.lin_disconnected_title, targetSsid)
+            val message = context.getString(R.string.lin_disconnected_message, targetSsid)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val channel = NotificationChannel(
                     CHANNEL_ID_DISCONNECT,
-                    context.getString(R.string.lin_disconnected_title),
+                    title,
                     NotificationManager.IMPORTANCE_HIGH
                 )
                 (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
@@ -107,8 +156,8 @@ class WifiCheckReceiver : BroadcastReceiver() {
             }
             val builder = NotificationCompat.Builder(context, CHANNEL_ID_DISCONNECT)
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle(context.getString(R.string.lin_disconnected_title))
-                .setContentText(context.getString(R.string.lin_disconnected_message))
+                .setContentTitle(title)
+                .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
             try {

@@ -18,6 +18,7 @@ class NetworkStatusFragment : Fragment() {
     private lateinit var prefs: Prefs
     private lateinit var store: WifiStatsStore
     private lateinit var textWifiStatus: TextView
+    private lateinit var textTargetSsid: TextView
     private lateinit var textTodayDuration: TextView
     private lateinit var textFirstLinConnectedToday: TextView
     private lateinit var textLastLinDisconnected: TextView
@@ -40,6 +41,7 @@ class NetworkStatusFragment : Fragment() {
         store = WifiStatsStore(requireContext())
 
         textWifiStatus = view.findViewById(R.id.text_wifi_status)
+        textTargetSsid = view.findViewById(R.id.text_target_ssid)
         textTodayDuration = view.findViewById(R.id.text_today_duration)
         textFirstLinConnectedToday = view.findViewById(R.id.text_first_lin_connected_today)
         textLastLinDisconnected = view.findViewById(R.id.text_last_lin_disconnected)
@@ -60,6 +62,7 @@ class NetworkStatusFragment : Fragment() {
         }
 
         updateStatus()
+        updateTargetSsid()
         updateTodayDuration()
         updateLastLinTimes()
     }
@@ -70,6 +73,7 @@ class NetworkStatusFragment : Fragment() {
         val connectedToLin = WifiUtils.isConnectedToLinInc(ctx)
         store.onWifiStateChanged(ctx, connectedToLin)
         updateStatus()
+        updateTargetSsid()
         updateTodayDuration()
         updateLastLinTimes()
     }
@@ -89,6 +93,7 @@ class NetworkStatusFragment : Fragment() {
             WifiCheckService.stop(ctx)
         }
         updateStatus()
+        updateTargetSsid()
         updateTodayDuration()
         updateLastLinTimes()
         startTicking()
@@ -130,6 +135,12 @@ class NetworkStatusFragment : Fragment() {
             }
             else -> getString(R.string.wifi_status_none)
         }
+    }
+
+    private fun updateTargetSsid() {
+        val ctx = requireContext()
+        val targetSsid = WifiUtils.getTargetSsid(ctx)
+        textTargetSsid.text = targetSsid
     }
 
     private fun updateLastLinTimes() {

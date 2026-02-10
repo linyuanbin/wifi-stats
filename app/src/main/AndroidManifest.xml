@@ -51,7 +51,7 @@
             android:foregroundServiceType="specialUse">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="后台保活以维持 WiFi 检查与 LIN-INC 统计" />
+                android:value="后台保活以维持 WiFi 检查与统计" />
         </service>
     </application>
 </manifest>
