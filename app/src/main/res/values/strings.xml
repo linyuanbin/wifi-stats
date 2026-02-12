@@ -24,6 +24,11 @@
     <string name="first_lin_connected_today">今日首次连接</string>
     <string name="last_lin_connected">最近一次连接Wi-Fi</string>
     <string name="btn_refresh">刷新</string>
+    <string name="btn_fix">修复</string>
+    <string name="fix_dialog_title">修复今日时长</string>
+    <string name="fix_dialog_message">确定将今日在线时长、午休时长、上传/下载流量、今日首次连接时间、最近断开时间全部清零？</string>
+    <string name="fix_dialog_confirm">确定</string>
+    <string name="fix_dialog_cancel">取消</string>
     <string name="last_lin_disconnected">最近一次断开</string>
     <string name="never">从未</string>
     <string name="today_duration_title">今日WI-FI在线时长</string>

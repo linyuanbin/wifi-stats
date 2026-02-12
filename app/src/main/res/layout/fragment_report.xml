@@ -7,31 +7,44 @@
         android:orientation="vertical">
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
         <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Wi-Fi 统计（连接时长 / 上传 / 下载）"
-                android:textSize="16sp"
-                android:textStyle="bold"/>
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Wi-Fi 统计（连接时长 / 上传 / 下载）"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
         <Button
-                android:id="@+id/btn_refresh_report"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:text="@string/btn_refresh"
-                android:textColor="?attr/colorPrimary"
-                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+            android:id="@+id/btn_fix_report"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/btn_fix"
+            android:textColor="?attr/colorPrimary"
+            android:background="?android:attr/selectableItemBackgroundBorderless" />
+        <Button
+            android:id="@+id/btn_refresh_report"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:text="@string/btn_refresh"
+            android:textColor="?attr/colorPrimary" />
     </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout

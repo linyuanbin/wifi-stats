@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -52,7 +53,7 @@ class ReportFragment : Fragment() {
         })
 
         view.findViewById<View>(R.id.btn_refresh_report).setOnClickListener { refreshStats() }
-
+        view.findViewById<View>(R.id.btn_fix_report).setOnClickListener { showFixConfirmDialog() }
         refreshStats()
     }
 
@@ -161,4 +162,17 @@ class ReportFragment : Fragment() {
         chart.legend.isWordWrapEnabled = true
         chart.invalidate()
     }
+
+    private fun showFixConfirmDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.fix_dialog_title)
+            .setMessage(R.string.fix_dialog_message)
+            .setPositiveButton(R.string.fix_dialog_confirm) { _, _ ->
+                store.clearTodayDurations(requireContext())
+                refreshStats()
+            }
+            .setNegativeButton(R.string.fix_dialog_cancel, null)
+            .show()
+    }
+
 }

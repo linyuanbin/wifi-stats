@@ -58,8 +58,8 @@ class WifiStatsStore(context: Context) {
             clearSession()
         }
         if (connectedToLinNow) {
+            val now = System.currentTimeMillis()
             if (!isLinConnected) {
-                val now = System.currentTimeMillis()
                 Prefs(context).lastLinConnectedAtMs = now
                 val p = Prefs(context)
                 if (p.firstLinConnectedTodayMs == 0L || dayKeyOf(p.firstLinConnectedTodayMs) != today) {
@@ -155,6 +155,14 @@ class WifiStatsStore(context: Context) {
     }
 
     fun getDay(dayKey: String): DayRecord = getDayRaw(dayKey)
+
+    /** 将当天在线时长、午休时长、上传/下载流量清零，并清空今日首次连接/最近断开时间。用于修复错误累计的数据。 */
+    fun clearTodayDurations(context: Context) {
+        val today = todayKey()
+        prefs.edit().putString(keyDaily + today, toJson(0, 0, 0)).apply()
+        Prefs(context).firstLinConnectedTodayMs = 0
+        Prefs(context).lastLinDisconnectedAtMs = 0
+    }
 
     /** 今日 LIN-INC 在线时长（秒），含当前未结算的会话（仅加「自上次采样至今」，避免与已存今日重复） */
     fun getTodayDurationLiveSeconds(): Long {
