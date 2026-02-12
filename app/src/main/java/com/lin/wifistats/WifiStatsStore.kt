@@ -66,6 +66,9 @@ class WifiStatsStore(context: Context) {
                     p.firstLinConnectedTodayMs = now
                 }
                 startSession()
+            } else if (dayKeyOf(lastSampleAtMs) != today) {
+                // 上次采样是跨天前的（如应用被杀死/关机未断开），不能把多天误算到今日，需重置会话
+                startSession()
             }
             accumulateToDay(today)
         }
