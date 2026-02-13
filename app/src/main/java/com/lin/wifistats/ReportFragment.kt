@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -70,7 +72,11 @@ class ReportFragment : Fragment() {
         val chart = view.findViewById<LineChart>(R.id.chart)
         val recycler = view.findViewById<RecyclerView>(R.id.recycler)
         recycler.layoutManager = LinearLayoutManager(requireContext())
-        val adapter = StatsAdapter()
+        val adapter = StatsAdapter(
+            onRowLongClick = if (currentTab == 0) {
+                { item -> showRowActionDialog(item) }
+            } else null
+        )
         recycler.adapter = adapter
 
         when (currentTab) {
@@ -172,6 +178,57 @@ class ReportFragment : Fragment() {
                 refreshStats()
             }
             .setNegativeButton(R.string.fix_dialog_cancel, null)
+            .show()
+    }
+
+    private fun showRowActionDialog(item: StatItem) {
+        val options =
+            arrayOf(getString(R.string.row_action_edit), getString(R.string.row_action_delete))
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.row_action_title))
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> showEditDayDialog(item)
+                    1 -> showDeleteDayConfirmDialog(item)
+                }
+            }
+            .show()
+    }
+
+    private fun showEditDayDialog(item: StatItem) {
+        val ctx = requireContext()
+        val layout = LinearLayout(ctx).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(50, 40, 50, 10)
+        }
+        val inputDuration = EditText(ctx).apply {
+            hint = getString(R.string.edit_duration_hint)
+            setText(String.format("%.2f", item.durationSeconds / 3600.0))
+            setSingleLine(true)
+        }
+        layout.addView(inputDuration)
+        AlertDialog.Builder(ctx)
+            .setTitle(getString(R.string.edit_day_title, item.period))
+            .setView(layout)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                val durH = inputDuration.text.toString().toDoubleOrNull() ?: 0.0
+                val durSec = (durH * 3600).toLong().coerceAtLeast(0)
+                store.setDayDurations(item.period, durSec)
+                refreshStats()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun showDeleteDayConfirmDialog(item: StatItem) {
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.row_action_delete))
+            .setMessage(getString(R.string.delete_day_confirm))
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                store.deleteDay(item.period)
+                refreshStats()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
 

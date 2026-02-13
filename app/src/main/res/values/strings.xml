@@ -47,4 +47,11 @@
     <string name="settings_background_hint">若后台收不到提醒，请允许本应用：自启动、后台运行、不限制电量。</string>
     <string name="settings_btn_request_battery">请求勿优化电量</string>
     <string name="settings_btn_open_app_settings">打开应用设置</string>
+    <string name="row_action_title">操作</string>
+    <string name="row_action_edit">编辑</string>
+    <string name="row_action_delete">删除</string>
+    <string name="edit_day_title">编辑 %s 数据</string>
+    <string name="edit_duration_hint">工作时长(小时)</string>
+    <string name="edit_lunch_hint">午休时长(小时)</string>
+    <string name="delete_day_confirm">确定删除该天数据？</string>
 </resources>

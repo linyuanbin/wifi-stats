@@ -6,7 +6,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class StatsAdapter(
-    private var items: List<StatItem> = emptyList()
+    private var items: List<StatItem> = emptyList(),
+    var onRowLongClick: ((StatItem) -> Unit)? = null
 ) : RecyclerView.Adapter<StatsAdapter.VH>() {
 
     fun setData(list: List<StatItem>) {
@@ -25,6 +26,10 @@ class StatsAdapter(
         holder.duration.text = item.durationFormatted()
         holder.upload.text = item.bytesFormatted(item.txBytes)
         holder.download.text = item.bytesFormatted(item.rxBytes)
+        holder.itemView.setOnLongClickListener {
+            onRowLongClick?.invoke(item)
+            true
+        }
     }
 
     override fun getItemCount(): Int = items.size

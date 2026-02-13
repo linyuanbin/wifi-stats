@@ -59,15 +59,19 @@ class WifiStatsStore(context: Context) {
         }
         if (connectedToLinNow) {
             val now = System.currentTimeMillis()
+            val p = Prefs(context)
             if (!isLinConnected) {
                 Prefs(context).lastLinConnectedAtMs = now
-                val p = Prefs(context)
                 if (p.firstLinConnectedTodayMs == 0L || dayKeyOf(p.firstLinConnectedTodayMs) != today) {
                     p.firstLinConnectedTodayMs = now
                 }
                 startSession()
             } else if (dayKeyOf(lastSampleAtMs) != today) {
                 // 上次采样是跨天前的（如应用被杀死/关机未断开），不能把多天误算到今日，需重置会话
+                // 第二天重连：清空今日存储的时长/流量及首次连接、最近断开时间，再重置会话
+                prefs.edit().putString(keyDaily + today, toJson(0, 0, 0)).apply()
+                p.firstLinConnectedTodayMs = now
+                p.lastLinDisconnectedAtMs = 0
                 startSession()
             }
             accumulateToDay(today)
@@ -158,6 +162,22 @@ class WifiStatsStore(context: Context) {
     }
 
     fun getDay(dayKey: String): DayRecord = getDayRaw(dayKey)
+
+    /** 设置某天的工作时长和午休时长（秒），保留上传/下载流量。仅用于按天表格的编辑。 */
+    fun setDayDurations(dayKey: String, durationSeconds: Long) {
+        if (durationSeconds < 0) return
+        val existing = getDayRaw(dayKey)
+        prefs.edit().putString(
+            keyDaily + dayKey,
+            toJson(durationSeconds, existing.rxBytes, existing.txBytes)
+        ).apply()
+    }
+
+    /** 删除某天的记录。 */
+    fun deleteDay(dayKey: String) {
+        prefs.edit().remove(keyDaily + dayKey).apply()
+    }
+
 
     /** 将当天在线时长、午休时长、上传/下载流量清零，并清空今日首次连接/最近断开时间。用于修复错误累计的数据。 */
     fun clearTodayDurations(context: Context) {
